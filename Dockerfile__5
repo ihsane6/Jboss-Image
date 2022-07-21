@@ -1,7 +1,7 @@
 FROM centos:7
 
 RUN yum update && yum install wget -y ; \
-yum install java-1.8.0-openjdk-devel ;\
+yum install java-1.8.0-openjdk-devel -y ;\
 groupadd -r wildfly ; \
 useradd -r -g wildfly -d /opt/wildfly -s /sbin/nologin wildfly ;\
 WILDFLY_VERSION=16.0.0.Final ; \
