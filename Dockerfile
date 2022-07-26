@@ -9,8 +9,8 @@ wget https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSIO
 tar xf /tmp/wildfly-$WILDFLY_VERSION.tar.gz -C /opt/ ; \
 ln -s /opt/wildfly-$WILDFLY_VERSION /opt/wildfly ; \
 chown -RH wildfly: /opt/wildfly ;
-ENV ADMIN_USER admin 
-ENV ADMIN_PASSWORD welcome1
+ENV ADMIN_USER ihsane 
+ENV ADMIN_PASSWORD hellow1
 RUN /opt/wildfly/bin/add-user.sh --silent=true $ADMIN_USER $ADMIN_PASSWORD 
 EXPOSE 8080 
 EXPOSE 9990 
