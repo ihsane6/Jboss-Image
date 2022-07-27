@@ -1,0 +1,40 @@
+#from is used to specifiy the base image on which we will build the image
+FROM centos:7
+
+#Run is used to run specifiect command with the linux terminal format while building the image 
+RUN yum update -y && yum install wget -y 
+# the -y flag is used to answer with yes by default to any installation confirmation
+RUN yum install java-1.8.0-openjdk-devel -y 
+RUN groupadd -r wildfly ; \
+useradd -r -g wildfly -d /opt/wildfly -s /sbin/nologin wildfly 
+#in the groupadd commande: -r is used to add the group as a system group
+#in the useradd command: -r had the same function, -g specifies the groups to which we want the user to be added, -d specifies the directory of the user
+#in the useradd command: -s specifies the shell to be used the /sbin/nologin is used to disable login for a user and displays a message when a login is tried, we use it here because we created a system user
+
+#ENV is used to specify the variable of the environement, for our exemple here we defined a variable wildfly_version and we gave it the value 16.0.0.Final
+ENV WILDFLY_VERSION 16.0.0.Final
+
+
+RUN wget https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz -P /tmp ; \
+# the wget command is used to downlad a file, the -P flage specifies the directory to be used for download
+tar xf /tmp/wildfly-$WILDFLY_VERSION.tar.gz -C /opt/ ; \
+#tar xf is used to unzip the the downloaded file and -C is used to specify the directory
+ln -s /opt/wildfly-$WILDFLY_VERSION /opt/wildfly ; \
+#ln -s is used to create a symbolic link to the jboss installation folder (this step is optional)
+chown -RH wildfly: /opt/wildfly ;
+#chown command is used to change the jboss directory to the user wildfly, the -R flag is used for reccursive changing so it will change the right of all the directory contents 
+#, and the -h flag is used to change the rights of the symbolic link
+
+
+ENV ADMIN_USER ihsane 
+ENV ADMIN_PASSWORD hellow
+
+#this command is used to add the user and password to jboss
+RUN /opt/wildfly/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD 
+
+#EXPOSE is used to expose a particular port to be used inside the container
+EXPOSE 8080 
+EXPOSE 9990 
+
+#CMD is used to specify the commands that we want to run once we start the container, for our exemple here we want to start the jboss server once we start the container
+CMD ["/opt/wildfly/bin/standalone.sh", "-b=0.0.0.0", "-bmanagement=0.0.0.0"] 
